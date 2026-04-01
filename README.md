@@ -1,162 +1,196 @@
-# 🚀 Modul Praktikum 3  - 4
-## Batch Data Analytics & Visualization Layer with Spark and Power BI
+# 🚀 Modul Praktikum 5: Real-Time Smart Transportation Analytics
+## Decision-Oriented System with Apache Spark Streaming & Streamlit
 
-![Dashboard Screenshot](reports/dashboard.png)
-*(Ganti placeholder ini dengan screenshot hasil akhir Power BI kamu)*
+![Dashboard Screenshot](reports/dashboard_transportation.png)
+*(Ganti placeholder ini dengan screenshot hasil akhir Streamlit Dashboard kamu)*
 
-Repositori ini berisi kelanjutan implementasi *pipeline* data berbasis **Apache Spark (PySpark)**, yang kini diintegrasikan dengan **Microsoft Power BI** untuk membangun layer visualisasi dan *Business Intelligence* (BI).
+[cite_start]Repositori ini berisi implementasi *pipeline* data berbasis **Apache Spark Structured Streaming** dan **Streamlit** untuk membangun sistem analitik *real-time* di domain Smart Transportation[cite: 8, 39, 46]. [cite_start]Sistem ini tidak hanya memvisualisasikan data, tetapi juga bertindak sebagai **Decision-Oriented System** yang memberikan *insight* dan *alert* otomatis untuk mendukung pengambilan keputusan yang cepat[cite: 24, 25, 26, 57].
 
-Proyek ini merupakan bagian dari Praktikum **Big Data Technology** Program Studi Teknologi Informasi – UIN Antasari.
+[cite_start]Proyek ini merupakan bagian dari Praktikum **Big Data Technology** Program Studi Teknologi Informasi – UIN Antasari[cite: 3].
 
 ---
 
 ## 📌 Deskripsi Proyek
 
-Proyek ini mensimulasikan tahap akhir dari arsitektur Big Data modern: **Analytics & Visualization Layer**. 
-
-Melanjutkan dari arsitektur Medallion di Modul 2, data yang sudah bersih (*Curated*) diproses lebih lanjut menjadi *insight* bisnis:
-1. **Analytics Layer (PySpark):** Melakukan agregasi metrik bisnis (Total Revenue, Top Products, Revenue per Category) dan menyimpannya ke dalam *Serving Layer*.
-2. **Visualization Layer (Power BI):** Mengimpor data dari *Serving Layer* untuk membangun *dashboard* analitik interaktif yang siap digunakan oleh level manajerial dan eksekutif perusahaan untuk pengambilan keputusan.
+[cite_start]Proyek ini mensimulasikan arsitektur Big Data modern untuk pemrosesan data *streaming* (*Lambda/Kappa Architecture*)[cite: 708, 709]. Pipeline memproses data mobilitas kendaraan secara langsung (*real-time*) dan menghasilkan:
+1. [cite_start]**Streaming Layer (PySpark):** Membaca aliran data JSON secara *real-time* dan menyimpannya secara efisien ke dalam format kolumnar *Parquet* di *Serving Layer*[cite: 36, 39, 50, 51].
+2. [cite_start]**Analytics & Alerting Layer (Pandas):** Menghitung metrik utama (KPI), mendeteksi jam sibuk (*Peak Hour*), mendeteksi anomali perjalanan, dan men-*generate* peringatan lalu lintas (*Traffic Alerts*)[cite: 53, 54, 59, 60, 210, 305].
+3. [cite_start]**Visualization Layer (Streamlit):** Membangun *dashboard* interaktif yang melakukan *auto-refresh* setiap 5 detik untuk menampilkan *Live Trip Data*, tren mobilitas, dan peringatan operasional[cite: 46, 259, 260].
 
 ---
 
 ## 🛠️ Environment & Teknologi
 
-- **Bahasa Pemrograman**: Python 3
-- **Engine Pemrosesan Data**: Apache Spark (PySpark)
-- **Business Intelligence Platform**: Microsoft Power BI Desktop
-- **Visualisasi Python**: Matplotlib, Pandas
-- **Sistem Operasi**: Linux Environment (WSL - Ubuntu) & Windows
-- **Code Editor**: Visual Studio Code + Remote WSL Extension
-- **Format Penyimpanan**: Parquet (Data Lake) & CSV (Serving/BI Layer)
+- [cite_start]**Bahasa Pemrograman**: Python 3 [cite: 9]
+- [cite_start]**Engine Pemrosesan Data**: Apache Spark (PySpark Structured Streaming) [cite: 9, 39]
+- [cite_start]**Real-Time Visualization**: Streamlit [cite: 9]
+- [cite_start]**Data Analytics & Manipulasi**: Pandas [cite: 139]
+- [cite_start]**Sistem Operasi**: Linux Server Environment (WSL - Ubuntu) [cite: 9]
+- [cite_start]**Code Editor**: Visual Studio Code (Remote WSL) [cite: 9]
+- [cite_start]**Format Penyimpanan**: JSON (Ingestion) & Parquet (Data Lake/Serving) [cite: 36, 40]
 
 ---
 
 ## 📂 Struktur Direktori
 
-Struktur proyek kini memiliki tambahan layer untuk *Serving* dan laporan visual:
+[cite_start]Sistem ini menggunakan arsitektur modular yang memisahkan logika berdasarkan domain (*Multi-Domain Pipeline*)[cite: 62, 63]:
 
 ```text
 bigdata-project/
+├── alerts/
+│   ├── __init__.py                     # Wajib agar dikenali sebagai modul [cite: 87]
+│   └── transportation_alert.py         # Logika deteksi alert lalu lintas [cite: 80, 217]
+├── analytics/
+│   ├── __init__.py                     # Wajib agar dikenali sebagai modul [cite: 87]
+│   └── transportation_analytics.py     # Logika pemrosesan analitik dan metrik [cite: 76, 138]
+├── dashboard/
+│   └── dashboard_transportation.py     # UI Streamlit untuk real-time dashboard [cite: 82, 229]
 ├── data/
-│   ├── raw/        # Data mentah (CSV)
-│   ├── clean/      # Data tervalidasi (Parquet)
-│   ├── curated/    # Data siap analitik (Parquet)
-│   └── serving/    # Data agregasi siap konsumsi BI (CSV)
-├── reports/        # Hasil export visualisasi (.png) & file Dashboard (.pbix)
-├── logs/           # Log eksekusi pipeline
+│   ├── checkpoints/transportation/     # Menyimpan state Spark Streaming [cite: 86]
+│   └── serving/transportation/         # Data Parquet hasil pemrosesan [cite: 84, 85]
 ├── scripts/
-│   ├── batch_pipeline_enterprise.py
-│   └── analytics_visualization.py
+│   └── transportation/
+│       ├── streaming_trip_layer.py     # Script PySpark untuk ingest & sink data [cite: 117]
+│       └── trip_generator.py           # Script pembuat data dummy (JSON) [cite: 90]
+├── stream_data/
+│   └── transportation/                 # Folder tempat data JSON masuk [cite: 93]
 └── README.md
 ```
-# ⚙️ Setup & Instalasi
-
-## 1️⃣ Persiapan PySpark & Dependensi Python
-(Pastikan setup **WSL** dan **Java 17** dari Modul 2 sudah berjalan)
-
-Aktifkan virtual environment dan tambahkan library visualisasi:
-
-```bash
-source venv/bin/activate
-pip install pyspark pandas matplotlib
-```
-----
-# 2️⃣ Persiapan Power BI
-
-Unduh dan instal Microsoft Power BI Desktop di sistem Windows Anda melalui tautan resmi Microsoft atau Microsoft Store.
 -----
+#### ⚙️ Setup & Instalasi
+Pastikan Anda menjalankan proyek ini dari Root Project Directory (bigdata-project/)
+1. Aktifkan virtual environment:
+   ```Bash
+   source venv/bin/activate
+   ```
+2. Instal pustaka yang dibutuhkan:
+   ```Bash
+   pip install pyspark pandas streamlit
+   ```
 
-🚀 Cara Menjalankan Pipeline & Visualisasi
-Langkah 1: Generate Analytics Data (Serving Layer)
+#### 🚀 Cara Menjalankan Pipeline (Wajib Berurutan)
+Untuk menjalankan ekosistem real-time ini, Anda harus membuka 3 Terminal secara bersamaan dan menjalankannya dengan urutan berikut:
 
-Buka terminal di VS Code (mode WSL)
+- Terminal 1: Jalankan Spark Streaming Engine
+Berfungsi membaca data dari stream_data/transportation dan menulisnya dalam format Parquet ke data/serving/transportation.
+```Bash
+spark-submit scripts/transportation/streaming_trip_layer.py
+```
 
-- Aktifkan virtual environment:
-```
-source venv/bin/activate
-```
-- Jalankan skrip agregasi Spark untuk membuat data metrik:
-```
-python scripts/analytics_visualization.py
-```
-Output yang dihasilkan:
- - File CSV metrik di folder data/serving/
- - Gambar grafik dasar di folder reports/
+Gemini berkata
+Wah, selamat ya sudah berhasil menyelesaikan praktikumnya, Azmi! 🎉 Menyelesaikan pipeline streaming data real-time dengan Spark dan Streamlit itu pencapaian yang keren banget.
 
- ----
-# Langkah 2: Build Power BI Dashboard
+Karena kamu sudah masuk ke tahap Modul 5: Smart Transportation & Decision-Oriented System, isi README.md kamu harus dirombak total dari yang sebelumnya berbasis Batch Processing (Modul 3-4) menjadi Real-Time Streaming.
 
-1. Buka Power BI Desktop
-2. Pilih Get Data → Text/CSV
-3. Muat file CSV dari folder data/serving/
-4. Buat visualisasi berikut:
+Berikut adalah draf pembaruan README.md yang sudah saya susun dengan gaya profesional ala repository GitHub production-ready, lengkap dengan arsitektur dan instruksi eksekusi sesuai Modul 5:
 
-KPI Card
-- Total Revenue → total_revenue.csv
-Clustered Bar Chart
-- Top 5 Products → top_products.csv
-- Sort Descending
-Clustered Bar Chart
-- Revenue per Category → category_revenue.csv
+Markdown
+# 🚀 Modul Praktikum 5: Real-Time Smart Transportation Analytics
+## Decision-Oriented System with Apache Spark Streaming & Streamlit
 
-Layout Dashboard
+![Dashboard Screenshot](reports/dashboard_transportation.png)
+*(Ganti placeholder ini dengan screenshot hasil akhir Streamlit Dashboard kamu)*
 
-Tambahkan Text Box dengan:
-- Judul:
-```
-E-Commerce Sales Dashboard
-```
-Subtitle:
-```
-Batch Analytics – Big Data Technology
-```
-Simpan file sebagai:
-```
-reports/dashboard_ecommerce.pbix
-```
-# 🧠 Konsep yang Diimplementasikan
-✅ Serving Layer Pattern
-Mengubah data Data Lake (Parquet) yang masif menjadi tabel agregasi kecil (CSV) yang sangat cepat di-load oleh tools BI.
-Hal ini mengurangi beban query pada sistem dan mempercepat proses rendering visualisasi.
-✅ Key Performance Indicator (KPI) Design
-Menentukan dan menghitung metrik utama yang relevan untuk bisnis, seperti Total Revenue, agar performa e-commerce dapat dipahami secara cepat oleh stakeholder.
-✅ Data Visualization Principles
-MEmilih jenis grafik yang tepat:
-- Bar Chart → untuk perbandingan kategori atau produk
-- Sorting data → agar insight langsung terlihat tanpa analisis manual.
-----
+[cite_start]Repositori ini berisi implementasi *pipeline* data berbasis **Apache Spark Structured Streaming** dan **Streamlit** untuk membangun sistem analitik *real-time* di domain Smart Transportation[cite: 8, 39, 46]. [cite_start]Sistem ini tidak hanya memvisualisasikan data, tetapi juga bertindak sebagai **Decision-Oriented System** yang memberikan *insight* dan *alert* otomatis untuk mendukung pengambilan keputusan yang cepat[cite: 24, 25, 26, 57].
+
+[cite_start]Proyek ini merupakan bagian dari Praktikum **Big Data Technology** Program Studi Teknologi Informasi – UIN Antasari[cite: 3].
 
 ---
 
-## 📊 Output Pipeline
+## 📌 Deskripsi Proyek
 
-Arsitektur data yang dihasilkan dari awal hingga akhir:
+[cite_start]Proyek ini mensimulasikan arsitektur Big Data modern untuk pemrosesan data *streaming* (*Lambda/Kappa Architecture*)[cite: 708, 709]. Pipeline memproses data mobilitas kendaraan secara langsung (*real-time*) dan menghasilkan:
+1. [cite_start]**Streaming Layer (PySpark):** Membaca aliran data JSON secara *real-time* dan menyimpannya secara efisien ke dalam format kolumnar *Parquet* di *Serving Layer*[cite: 36, 39, 50, 51].
+2. [cite_start]**Analytics & Alerting Layer (Pandas):** Menghitung metrik utama (KPI), mendeteksi jam sibuk (*Peak Hour*), mendeteksi anomali perjalanan, dan men-*generate* peringatan lalu lintas (*Traffic Alerts*)[cite: 53, 54, 59, 60, 210, 305].
+3. [cite_start]**Visualization Layer (Streamlit):** Membangun *dashboard* interaktif yang melakukan *auto-refresh* setiap 5 detik untuk menampilkan *Live Trip Data*, tren mobilitas, dan peringatan operasional[cite: 46, 259, 260].
 
-| Layer / Tahap   | Teknologi | Format  | Kegunaan                              |
-|-----------------|-----------|---------|----------------------------------------|
-| Raw             | CSV       | CSV     | Data mentah sumber                     |
-| Clean / Curated | PySpark   | Parquet | Data tervalidasi & siap analitik       |
-| Serving         | PySpark   | CSV     | Data agregasi ringan untuk BI          |
-| Visualization   | Power BI  | .pbix   | Dashboard interaktif                   |
+---
 
-----
-📈 Use Case & Pengembangan Lanjutan
+## 🛠️ Environment & Teknologi
 
-Pipeline ini dapat dikembangkan lebih lanjut untuk:
-- Integrasi otomatisasi penjadwalan dengan Apache Airflow
-- Deployment ke ekosistem Cloud
-  - AWS S3
-  - GCP Cloud Storage
-- Pembuatan filter interaktif (Slicer) berdasarkan rentang tanggal di Power BI
-----
-👨‍💻 Author
+- [cite_start]**Bahasa Pemrograman**: Python 3 [cite: 9]
+- [cite_start]**Engine Pemrosesan Data**: Apache Spark (PySpark Structured Streaming) [cite: 9, 39]
+- [cite_start]**Real-Time Visualization**: Streamlit [cite: 9]
+- [cite_start]**Data Analytics & Manipulasi**: Pandas [cite: 139]
+- [cite_start]**Sistem Operasi**: Linux Server Environment (WSL - Ubuntu) [cite: 9]
+- [cite_start]**Code Editor**: Visual Studio Code (Remote WSL) [cite: 9]
+- [cite_start]**Format Penyimpanan**: JSON (Ingestion) & Parquet (Data Lake/Serving) [cite: 36, 40]
 
-- Muhammad Raihan Azmi
-- Praktikum Big Data Technology – 2026
-Program Studi Teknologi Informasi
-UIN Antasari
+---
 
+## 📂 Struktur Direktori
+
+[cite_start]Sistem ini menggunakan arsitektur modular yang memisahkan logika berdasarkan domain (*Multi-Domain Pipeline*)[cite: 62, 63]:
+
+```text
+bigdata-project/
+├── alerts/
+│   ├── __init__.py                     # Wajib agar dikenali sebagai modul [cite: 87]
+│   └── transportation_alert.py         # Logika deteksi alert lalu lintas [cite: 80, 217]
+├── analytics/
+│   ├── __init__.py                     # Wajib agar dikenali sebagai modul [cite: 87]
+│   └── transportation_analytics.py     # Logika pemrosesan analitik dan metrik [cite: 76, 138]
+├── dashboard/
+│   └── dashboard_transportation.py     # UI Streamlit untuk real-time dashboard [cite: 82, 229]
+├── data/
+│   ├── checkpoints/transportation/     # Menyimpan state Spark Streaming [cite: 86]
+│   └── serving/transportation/         # Data Parquet hasil pemrosesan [cite: 84, 85]
+├── scripts/
+│   └── transportation/
+│       ├── streaming_trip_layer.py     # Script PySpark untuk ingest & sink data [cite: 117]
+│       └── trip_generator.py           # Script pembuat data dummy (JSON) [cite: 90]
+├── stream_data/
+│   └── transportation/                 # Folder tempat data JSON masuk [cite: 93]
+└── README.md
 ```
-Jika Anda mau, saya juga bisa bantu membuat **versi README.md yang lebih profesional seperti repository GitHub (lengkap dengan badge, arsitektur pipeline diagram, dan struktur folder project)** supaya terlihat seperti **project Big Data production-ready**.
+### ⚙️ Setup & Instalasi
+Pastikan Anda menjalankan proyek ini dari Root Project Directory (bigdata-project/).
+
+Aktifkan virtual environment:
+
+```Bash
+source venv/bin/activate
 ```
+
+Instal pustaka yang dibutuhkan:
+```Bash
+pip install pyspark pandas streamlit
+```
+
+### 🚀 Cara Menjalankan Pipeline (Wajib Berurutan)
+Untuk menjalankan ekosistem real-time ini, Anda harus membuka 3 Terminal secara bersamaan dan menjalankannya dengan urutan berikut:
+
+Terminal 1: Jalankan Spark Streaming Engine
+Berfungsi membaca data dari stream_data/transportation dan menulisnya dalam format Parquet ke data/serving/transportation.
+
+``` Bash
+spark-submit scripts/transportation/streaming_trip_layer.py
+```
+
+Terminal 2: Jalankan Data Generator
+Mensimulasikan sensor kendaraan yang mengirimkan data trip setiap 3 detik.
+
+```Bash
+python scripts/transportation/trip_generator.py
+```
+Terminal 3: Jalankan Streamlit Dashboard
+Membaca data secara berkala dan menampilkan visualisasi serta sistem peringatan dini.
+
+```Bash
+streamlit run dashboard/dashboard_transportation.py
+```
+👉 Akses dashboard di browser: http://localhost:8501
+
+---- 
+
+### 🧠 Insight & Arsitektur KeputusanSistem ini mendukung 3 lapis pengambilan keputusan (Decision-Oriented System):
+1. Real-Time Decision (Operasional): - Traffic Alerts (contoh: "High traffic volume") dan Live Trip Data untuk penyesuaian rute atau pelacakan pelanggan seketika.
+2. Tactical Decision (Near Real-Time): - Visualisasi Vehicle Distribution dan Fare per Location untuk menyeimbangkan penempatan armada (fleet balancing) dan mengoptimalkan harga (dynamic pricing).
+3. Strategic Decision (Historikal): - Mobility Trend dan Abnormal Trips untuk mendeteksi potensi kecurangan (fraud detection) dan melakukan peramalan permintaan (demand forecasting).
+
+-----
+### 👨‍💻 Author
+Muhammad Raihan Azmi 
+Praktikum Big Data Technology – 2026 
+Program Studi Teknologi Informasi 
+UIN Antasari 
