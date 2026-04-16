@@ -1,196 +1,114 @@
-# 🚀 Modul Praktikum 5: Real-Time Smart Transportation Analytics
-## Decision-Oriented System with Apache Spark Streaming & Streamlit
+# 🚀 Big Data Project: Smart Transportation & Traffic Prediction AI
+## Integrasi Real-Time Analytics (Modul 5) & Machine Learning Pipeline (Modul 7)
 
 ![Dashboard Screenshot](reports/dashboard_transportation.png)
 *(Ganti placeholder ini dengan screenshot hasil akhir Streamlit Dashboard kamu)*
 
-[cite_start]Repositori ini berisi implementasi *pipeline* data berbasis **Apache Spark Structured Streaming** dan **Streamlit** untuk membangun sistem analitik *real-time* di domain Smart Transportation[cite: 8, 39, 46]. [cite_start]Sistem ini tidak hanya memvisualisasikan data, tetapi juga bertindak sebagai **Decision-Oriented System** yang memberikan *insight* dan *alert* otomatis untuk mendukung pengambilan keputusan yang cepat[cite: 24, 25, 26, 57].
+[cite_start]Repositori ini berisi implementasi *pipeline* data komprehensif yang mencakup arsitektur Big Data modern untuk pemrosesan *streaming* (**Modul 5**) dan sistem prediksi cerdas berbasis Machine Learning (**Modul 7**)[cite: 5, 6]. [cite_start]Sistem ini dirancang sebagai **Decision-Oriented System** untuk domain Smart City AI[cite: 7].
 
-[cite_start]Proyek ini merupakan bagian dari Praktikum **Big Data Technology** Program Studi Teknologi Informasi – UIN Antasari[cite: 3].
+Proyek ini merupakan bagian dari Praktikum **Big Data Technology** Program Studi Teknologi Informasi – UIN Antasari.
 
 ---
 
 ## 📌 Deskripsi Proyek
 
-[cite_start]Proyek ini mensimulasikan arsitektur Big Data modern untuk pemrosesan data *streaming* (*Lambda/Kappa Architecture*)[cite: 708, 709]. Pipeline memproses data mobilitas kendaraan secara langsung (*real-time*) dan menghasilkan:
-1. [cite_start]**Streaming Layer (PySpark):** Membaca aliran data JSON secara *real-time* dan menyimpannya secara efisien ke dalam format kolumnar *Parquet* di *Serving Layer*[cite: 36, 39, 50, 51].
-2. [cite_start]**Analytics & Alerting Layer (Pandas):** Menghitung metrik utama (KPI), mendeteksi jam sibuk (*Peak Hour*), mendeteksi anomali perjalanan, dan men-*generate* peringatan lalu lintas (*Traffic Alerts*)[cite: 53, 54, 59, 60, 210, 305].
-3. [cite_start]**Visualization Layer (Streamlit):** Membangun *dashboard* interaktif yang melakukan *auto-refresh* setiap 5 detik untuk menampilkan *Live Trip Data*, tren mobilitas, dan peringatan operasional[cite: 46, 259, 260].
+Sistem ini menggabungkan dua lapisan analitik utama:
+1. **Real-Time Analytics Layer (Modul 5):** Menggunakan PySpark Structured Streaming untuk menyerap aliran data JSON secara *real-time*, menyimpannya ke format *Parquet*, dan men-*generate* peringatan dini (*Traffic Alerts*).
+2. [cite_start]**Predictive Analytics Layer (Modul 7):** Menggunakan model Machine Learning **Random Forest** (Regresi) untuk melakukan prediksi volume kendaraan di masa depan[cite: 17, 18, 50]. [cite_start]Sistem ini melakukan *Feature Engineering* berbasis data runtun waktu (*Time-Series*) dengan memanfaatkan variabel `Jam`, `Hari`, dan `Lag`[cite: 27, 50].
+3. [cite_start]**Visualization Layer:** *Dashboard* interaktif dengan **Streamlit Modern UI** untuk memantau data historis, *live streaming*, dan melakukan input parameter prediksi secara dinamis[cite: 19, 20, 28].
+
+---
+
+## 🏙️ Konteks Industri (Smart City AI)
+
+[cite_start]Implementasi model prediksi *traffic* seperti pada proyek ini secara nyata digunakan dalam arsitektur Smart City global[cite: 30, 31]:
+* [cite_start]**Adaptive Traffic Control System** & Prediksi kemacetan *real-time*[cite: 32, 33].
+* [cite_start]**Smart Routing** (seperti sistem pada Google Maps dan Waze)[cite: 34].
+* [cite_start]**Integrasi IoT sensor jalan** untuk memantau mobilitas[cite: 35].
+* [cite_start]Diterapkan oleh perusahaan teknologi besar seperti Google (Traffic Prediction AI), IBM Smart City, dan Siemens Mobility[cite: 36, 37, 38, 39].
 
 ---
 
 ## 🛠️ Environment & Teknologi
 
-- [cite_start]**Bahasa Pemrograman**: Python 3 [cite: 9]
-- [cite_start]**Engine Pemrosesan Data**: Apache Spark (PySpark Structured Streaming) [cite: 9, 39]
-- [cite_start]**Real-Time Visualization**: Streamlit [cite: 9]
-- [cite_start]**Data Analytics & Manipulasi**: Pandas [cite: 139]
-- [cite_start]**Sistem Operasi**: Linux Server Environment (WSL - Ubuntu) [cite: 9]
-- [cite_start]**Code Editor**: Visual Studio Code (Remote WSL) [cite: 9]
-- [cite_start]**Format Penyimpanan**: JSON (Ingestion) & Parquet (Data Lake/Serving) [cite: 36, 40]
+* [cite_start]**Bahasa Pemrograman**: Python 3 [cite: 8, 9]
+* [cite_start]**Big Data Engine**: Apache Spark (PySpark Structured Streaming) [cite: 16]
+* [cite_start]**Machine Learning**: Scikit-Learn (Random Forest Regressor) [cite: 17, 18, 74]
+* [cite_start]**Data Manipulasi & Cleaning**: Pandas [cite: 61]
+* [cite_start]**Dashboarding**: Streamlit & Matplotlib [cite: 19, 20, 99, 102]
+* [cite_start]**Environment**: Linux Server Environment (WSL - Ubuntu) via VS Code [cite: 10, 11, 12, 13, 14, 15]
 
 ---
 
 ## 📂 Struktur Direktori
 
-[cite_start]Sistem ini menggunakan arsitektur modular yang memisahkan logika berdasarkan domain (*Multi-Domain Pipeline*)[cite: 62, 63]:
+Sistem menggunakan arsitektur modular yang memisahkan data mentah, proses *cleaning*, analitik, dan visualisasi (*Multi-Domain Pipeline*):
 
 ```text
 bigdata-project/
-├── alerts/
-│   ├── __init__.py                     # Wajib agar dikenali sebagai modul [cite: 87]
-│   └── transportation_alert.py         # Logika deteksi alert lalu lintas [cite: 80, 217]
 ├── analytics/
-│   ├── __init__.py                     # Wajib agar dikenali sebagai modul [cite: 87]
-│   └── transportation_analytics.py     # Logika pemrosesan analitik dan metrik [cite: 76, 138]
+│   ├── transportation_analytics.py     # [Modul 5] Logika metrik streaming
+│   └── traffic_ml_model_v1.py          # [Modul 7] Script training ML & Feature Engineering [cite: 72]
 ├── dashboard/
-│   └── dashboard_transportation.py     # UI Streamlit untuk real-time dashboard [cite: 82, 229]
+│   ├── dashboard_transportation.py     # [Modul 5] UI streaming real-time
+│   └── traffic_dashboard_v1.py         # [Modul 7] UI Prediksi Traffic dengan Slider [cite: 98]
 ├── data/
-│   ├── checkpoints/transportation/     # Menyimpan state Spark Streaming [cite: 86]
-│   └── serving/transportation/         # Data Parquet hasil pemrosesan [cite: 84, 85]
+│   ├── raw/
+│   │   └── traffic_smartcity_v1.csv    # [Modul 7] Raw dataset traffic [cite: 52, 53, 56]
+│   ├── clean/
+│   │   └── traffic_smartcity_clean_v1.csv # [Modul 7] Data hasil cleaning [cite: 68]
+│   ├── checkpoints/                    # [Modul 5] State Spark Streaming
+│   └── serving/                        # [Modul 5] Data Parquet
+├── models/
+│   └── traffic_model_v1.pkl            # [Modul 7] Model ML yang telah dilatih [cite: 91, 94]
 ├── scripts/
+│   ├── traffic_data_cleaning_v1.py     # [Modul 7] Proses pembersihan data [cite: 59, 60]
 │   └── transportation/
-│       ├── streaming_trip_layer.py     # Script PySpark untuk ingest & sink data [cite: 117]
-│       └── trip_generator.py           # Script pembuat data dummy (JSON) [cite: 90]
-├── stream_data/
-│   └── transportation/                 # Folder tempat data JSON masuk [cite: 93]
-└── README.md
-```
------
-#### ⚙️ Setup & Instalasi
-Pastikan Anda menjalankan proyek ini dari Root Project Directory (bigdata-project/)
-1. Aktifkan virtual environment:
-   ```Bash
-   source venv/bin/activate
-   ```
-2. Instal pustaka yang dibutuhkan:
-   ```Bash
-   pip install pyspark pandas streamlit
-   ```
-
-#### 🚀 Cara Menjalankan Pipeline (Wajib Berurutan)
-Untuk menjalankan ekosistem real-time ini, Anda harus membuka 3 Terminal secara bersamaan dan menjalankannya dengan urutan berikut:
-
-- Terminal 1: Jalankan Spark Streaming Engine
-Berfungsi membaca data dari stream_data/transportation dan menulisnya dalam format Parquet ke data/serving/transportation.
-```Bash
-spark-submit scripts/transportation/streaming_trip_layer.py
-```
-
-Gemini berkata
-Wah, selamat ya sudah berhasil menyelesaikan praktikumnya, Azmi! 🎉 Menyelesaikan pipeline streaming data real-time dengan Spark dan Streamlit itu pencapaian yang keren banget.
-
-Karena kamu sudah masuk ke tahap Modul 5: Smart Transportation & Decision-Oriented System, isi README.md kamu harus dirombak total dari yang sebelumnya berbasis Batch Processing (Modul 3-4) menjadi Real-Time Streaming.
-
-Berikut adalah draf pembaruan README.md yang sudah saya susun dengan gaya profesional ala repository GitHub production-ready, lengkap dengan arsitektur dan instruksi eksekusi sesuai Modul 5:
-
-Markdown
-# 🚀 Modul Praktikum 5: Real-Time Smart Transportation Analytics
-## Decision-Oriented System with Apache Spark Streaming & Streamlit
-
-![Dashboard Screenshot](reports/dashboard_transportation.png)
-*(Ganti placeholder ini dengan screenshot hasil akhir Streamlit Dashboard kamu)*
-
-[cite_start]Repositori ini berisi implementasi *pipeline* data berbasis **Apache Spark Structured Streaming** dan **Streamlit** untuk membangun sistem analitik *real-time* di domain Smart Transportation[cite: 8, 39, 46]. [cite_start]Sistem ini tidak hanya memvisualisasikan data, tetapi juga bertindak sebagai **Decision-Oriented System** yang memberikan *insight* dan *alert* otomatis untuk mendukung pengambilan keputusan yang cepat[cite: 24, 25, 26, 57].
-
-[cite_start]Proyek ini merupakan bagian dari Praktikum **Big Data Technology** Program Studi Teknologi Informasi – UIN Antasari[cite: 3].
-
----
-
-## 📌 Deskripsi Proyek
-
-[cite_start]Proyek ini mensimulasikan arsitektur Big Data modern untuk pemrosesan data *streaming* (*Lambda/Kappa Architecture*)[cite: 708, 709]. Pipeline memproses data mobilitas kendaraan secara langsung (*real-time*) dan menghasilkan:
-1. [cite_start]**Streaming Layer (PySpark):** Membaca aliran data JSON secara *real-time* dan menyimpannya secara efisien ke dalam format kolumnar *Parquet* di *Serving Layer*[cite: 36, 39, 50, 51].
-2. [cite_start]**Analytics & Alerting Layer (Pandas):** Menghitung metrik utama (KPI), mendeteksi jam sibuk (*Peak Hour*), mendeteksi anomali perjalanan, dan men-*generate* peringatan lalu lintas (*Traffic Alerts*)[cite: 53, 54, 59, 60, 210, 305].
-3. [cite_start]**Visualization Layer (Streamlit):** Membangun *dashboard* interaktif yang melakukan *auto-refresh* setiap 5 detik untuk menampilkan *Live Trip Data*, tren mobilitas, dan peringatan operasional[cite: 46, 259, 260].
-
----
-
-## 🛠️ Environment & Teknologi
-
-- [cite_start]**Bahasa Pemrograman**: Python 3 [cite: 9]
-- [cite_start]**Engine Pemrosesan Data**: Apache Spark (PySpark Structured Streaming) [cite: 9, 39]
-- [cite_start]**Real-Time Visualization**: Streamlit [cite: 9]
-- [cite_start]**Data Analytics & Manipulasi**: Pandas [cite: 139]
-- [cite_start]**Sistem Operasi**: Linux Server Environment (WSL - Ubuntu) [cite: 9]
-- [cite_start]**Code Editor**: Visual Studio Code (Remote WSL) [cite: 9]
-- [cite_start]**Format Penyimpanan**: JSON (Ingestion) & Parquet (Data Lake/Serving) [cite: 36, 40]
-
----
-
-## 📂 Struktur Direktori
-
-[cite_start]Sistem ini menggunakan arsitektur modular yang memisahkan logika berdasarkan domain (*Multi-Domain Pipeline*)[cite: 62, 63]:
-
-```text
-bigdata-project/
-├── alerts/
-│   ├── __init__.py                     # Wajib agar dikenali sebagai modul [cite: 87]
-│   └── transportation_alert.py         # Logika deteksi alert lalu lintas [cite: 80, 217]
-├── analytics/
-│   ├── __init__.py                     # Wajib agar dikenali sebagai modul [cite: 87]
-│   └── transportation_analytics.py     # Logika pemrosesan analitik dan metrik [cite: 76, 138]
-├── dashboard/
-│   └── dashboard_transportation.py     # UI Streamlit untuk real-time dashboard [cite: 82, 229]
-├── data/
-│   ├── checkpoints/transportation/     # Menyimpan state Spark Streaming [cite: 86]
-│   └── serving/transportation/         # Data Parquet hasil pemrosesan [cite: 84, 85]
-├── scripts/
-│   └── transportation/
-│       ├── streaming_trip_layer.py     # Script PySpark untuk ingest & sink data [cite: 117]
-│       └── trip_generator.py           # Script pembuat data dummy (JSON) [cite: 90]
-├── stream_data/
-│   └── transportation/                 # Folder tempat data JSON masuk [cite: 93]
+│       ├── streaming_trip_layer.py     # [Modul 5] Spark streaming script
+│       └── trip_generator.py           # [Modul 5] Generator data dummy JSON
 └── README.md
 ```
 ### ⚙️ Setup & Instalasi
-Pastikan Anda menjalankan proyek ini dari Root Project Directory (bigdata-project/).
+   - Pastikan terminal berada di Root Project Directory (bigdata-project/).
+   - Aktifkan virtual environment:
+      ```Bash
+      source venv/bin/activate
+      ```
+   - Instal pustaka yang dibutuhkan:
+      ```Bash
+      pip install pyspark pandas scikit-learn streamlit matplotlib joblib
+      ```
+### 🚀 Cara Menjalankan Pipeline
+   A. Menjalankan Machine Learning Pipeline (Modul 7)
+   1. Lakukan eksekusi berurutan pada satu terminal untuk melatih model prediksi:
+      ```Bash
+      python scripts/traffic_data_cleaning_v1.py
+      ```
+      (Script ini akan menghasilkan file traffic_smartcity_clean_v1.csv )(Script ini akan menghasilkan file traffic_smartcity_clean_v1.csv )
+   2. alankan Feature Engineering & ML Modeling:
+      ```Bash
+      python analytics/traffic_ml_model_v1.py
+      ```
+      (Script ini akan mengekstrak jam, hari, lag, melatih model Random Forest, dan menyimpannya sebagai traffic_model_v1.pkl )
+      Jalankan pembersihan data (Data Cleaning):
+   3.Jalankan Dashboard Prediksi:
+      ```Bash
+      streamlit run dashboard/traffic_dashboard_v1.py
+      ```
+      👉 Akses di browser: http://localhost:8501
+### B. Menjalankan Streaming Pipeline (Modul 5)
+Buka 3 terminal berbeda dan jalankan berurutan:
+   * Terminal 1 (Spark Ingestion): spark-submit scripts/transportation/streaming_trip_layer.py
+   * Terminal 2 (Data Generator): python scripts/transportation/trip_generator.py
+   * Terminal 3 (Live Dashboard): streamlit run dashboard/dashboard_transportation.py
 
-Aktifkan virtual environment:
+### 🧠 Insight & Arsitektur Keputusan
+Integrasi Big Data dan AI menghasilkan wawasan strategis:
+- Kekuatan ML: Machine Learning sangat powerful untuk memprediksi kemacetan. Bahkan dengan feature yang sederhana (Jam dan Hari), performa model sudah cukup kuat untuk memberikan taksiran yang akurat.
+- Pentingnya Pipeline Data: Alur kerja (pembersihan -> pemodelan -> serving) adalah fondasi penting dalam membangun Big Data System di dunia nyata.
+- Pengembangan Lanjutan: Di masa depan, sistem dapat berevolusi dengan mengintegrasikan antrean real-time via Apache Kafka/Spark dan transisi ke model Deep Learning seperti LSTM untuk forecast yang lebih canggih, mewujudkan ekosistem AI-driven decision system.
 
-```Bash
-source venv/bin/activate
-```
-
-Instal pustaka yang dibutuhkan:
-```Bash
-pip install pyspark pandas streamlit
-```
-
-### 🚀 Cara Menjalankan Pipeline (Wajib Berurutan)
-Untuk menjalankan ekosistem real-time ini, Anda harus membuka 3 Terminal secara bersamaan dan menjalankannya dengan urutan berikut:
-
-Terminal 1: Jalankan Spark Streaming Engine
-Berfungsi membaca data dari stream_data/transportation dan menulisnya dalam format Parquet ke data/serving/transportation.
-
-``` Bash
-spark-submit scripts/transportation/streaming_trip_layer.py
-```
-
-Terminal 2: Jalankan Data Generator
-Mensimulasikan sensor kendaraan yang mengirimkan data trip setiap 3 detik.
-
-```Bash
-python scripts/transportation/trip_generator.py
-```
-Terminal 3: Jalankan Streamlit Dashboard
-Membaca data secara berkala dan menampilkan visualisasi serta sistem peringatan dini.
-
-```Bash
-streamlit run dashboard/dashboard_transportation.py
-```
-👉 Akses dashboard di browser: http://localhost:8501
-
----- 
-
-### 🧠 Insight & Arsitektur KeputusanSistem ini mendukung 3 lapis pengambilan keputusan (Decision-Oriented System):
-1. Real-Time Decision (Operasional): - Traffic Alerts (contoh: "High traffic volume") dan Live Trip Data untuk penyesuaian rute atau pelacakan pelanggan seketika.
-2. Tactical Decision (Near Real-Time): - Visualisasi Vehicle Distribution dan Fare per Location untuk menyeimbangkan penempatan armada (fleet balancing) dan mengoptimalkan harga (dynamic pricing).
-3. Strategic Decision (Historikal): - Mobility Trend dan Abnormal Trips untuk mendeteksi potensi kecurangan (fraud detection) dan melakukan peramalan permintaan (demand forecasting).
-
------
 ### 👨‍💻 Author
-Muhammad Raihan Azmi 
-Praktikum Big Data Technology – 2026 
-Program Studi Teknologi Informasi 
-UIN Antasari 
+Muhammad Raihan Azmi Praktikum Big Data Technology – 2026
+Program Studi Teknologi Informasi
+UIN Antasari
